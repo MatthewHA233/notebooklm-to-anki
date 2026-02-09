@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "NotebookLM to Anki",
+  "version": "1.1.0",
+  "description": "Extract NotebookLM quizzes and generate Anki flashcard packages",
+  "permissions": [
+    "activeTab",
+    "scripting",
+    "downloads"
+  ],
+  "host_permissions": [
+    "https://notebooklm.google.com/*",
+    "https://*.google.com/*",
+    "https://*.googleusercontent.com/*",
+    "https://*.usercontent.goog/*",
+    "https://*.gstatic.com/*",
+    "http://localhost:5000/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}

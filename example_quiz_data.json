@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "question": "Python 中哪个关键字用于定义函数？",
+    "options": [
+      {"label": "A", "text": "function"},
+      {"label": "B", "text": "def"},
+      {"label": "C", "text": "func"},
+      {"label": "D", "text": "define"}
+    ],
+    "answer": "B",
+    "group": "Python 基础",
+    "explanation": "在 Python 中，使用 <b>def</b> 关键字来定义函数。例如：<br><code>def my_function(): pass</code>",
+    "tips": "def 是 define 的缩写",
+    "title1": "解题思路",
+    "title2": "点拨内容"
+  },
+  {
+    "id": 2,
+    "question": "下列哪个数据结构是可变的（mutable）？",
+    "options": [
+      {"label": "A", "text": "tuple"},
+      {"label": "B", "text": "string"},
+      {"label": "C", "text": "list"},
+      {"label": "D", "text": "frozenset"}
+    ],
+    "answer": "C",
+    "group": "Python 基础",
+    "explanation": "在 Python 中，<b>list</b> 是可变的，可以添加、删除或修改元素。而 tuple、string 和 frozenset 都是不可变的。",
+    "tips": "可变类型：list, dict, set<br>不可变类型：tuple, str, frozenset, int, float",
+    "title1": "解题思路",
+    "title2": "知识拓展"
+  },
+  {
+    "id": 3,
+    "question": "以下哪些是 Python 的内置数据类型？（多选）",
+    "options": [
+      {"label": "A", "text": "int"},
+      {"label": "B", "text": "array"},
+      {"label": "C", "text": "dict"},
+      {"label": "D", "text": "DataFrame"}
+    ],
+    "answer": "AC",
+    "group": "Python 基础",
+    "explanation": "<b>int</b> 和 <b>dict</b> 是 Python 内置数据类型。<br>array 需要 import array 模块，DataFrame 属于 pandas 库。",
+    "tips": "",
+    "title1": "解题思路",
+    "title2": ""
+  }
+]
