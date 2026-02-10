@@ -106,8 +106,8 @@
 <body>
   <h1 data-i18n="title">NotebookLM to Anki</h1>
 
-  <div id="serverStatus" class="status info" data-i18n="checking">
-    Checking server...
+  <div id="serverStatus" class="status success" data-i18n="ready">
+    Ready
   </div>
 
   <div class="field">
@@ -115,15 +115,24 @@
     <input type="text" id="deckName" data-i18n-placeholder="deckPlaceholder" placeholder="Auto-detecting...">
   </div>
 
-  <button id="extractBtn" disabled data-i18n="extractBtn" style="width:100%;margin-bottom:8px">Extract & Generate</button>
+  <button id="extractBtn" data-i18n="extractBtn" style="width:100%;margin-bottom:8px">Extract & Generate</button>
 
   <div id="progress" class="progress">
     <span class="spinner"></span>
     <span id="progressText"></span>
   </div>
 
-  <div class="footer">Server: localhost:5000</div>
+  <div class="footer">v2.0 - Pure Browser Extension</div>
 
+  <!-- Vendor libraries -->
+  <script src="vendor/sql-wasm.js"></script>
+  <script src="vendor/jszip.min.js"></script>
+
+  <!-- App modules -->
+  <script src="lib/anki-config.js"></script>
+  <script src="lib/anki-card-templates.js"></script>
+  <script src="lib/quiz-transformer.js"></script>
+  <script src="lib/anki-generator.js"></script>
   <script src="popup.js"></script>
 </body>
 </html>

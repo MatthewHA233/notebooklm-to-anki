@@ -1,33 +1,27 @@
-const SERVER_URL = "http://localhost:5000";
-
 // ── i18n ──
 const I18N = {
   zh: {
     title: "NotebookLM 转 Anki",
-    checking: "正在检查服务器...",
-    serverOk: "服务器已连接",
-    serverFail: "服务器未运行，请先执行: python server.py",
+    ready: "就绪，可以提取测验数据",
     deckLabel: "卡组名称",
     deckPlaceholder: "自动检测中...",
     extractBtn: "提取并生成",
     notOnPage: "请先打开 NotebookLM 测验页面",
     extracting: "正在从页面提取数据...",
-    checkingServer: "正在检查服务器...",
+    generating: "正在生成 .apkg 文件...",
     found: (n) => `找到 ${n} 道题，正在生成 .apkg...`,
     done: (n) => `完成！已生成 ${n} 张卡片。`,
     extractFail: "提取失败，请确保测验已打开并完全加载。",
   },
   en: {
     title: "NotebookLM to Anki",
-    checking: "Checking server...",
-    serverOk: "Server connected",
-    serverFail: "Server not running. Start it with: python server.py",
+    ready: "Ready to extract quiz data",
     deckLabel: "Deck name",
     deckPlaceholder: "Auto-detecting...",
     extractBtn: "Extract & Generate",
     notOnPage: "Please open a NotebookLM quiz page first",
     extracting: "Extracting quiz data from page...",
-    checkingServer: "Checking server...",
+    generating: "Generating .apkg file...",
     found: (n) => `Found ${n} questions. Generating .apkg...`,
     done: (n) => `Done! ${n} cards generated.`,
     extractFail: "Failed to extract quiz data. Make sure the quiz is open and fully loaded.",
@@ -70,23 +64,6 @@ function showProgress(text) {
 
 function hideProgress() {
   progressEl.style.display = "none";
-}
-
-// ── Server check ──
-async function checkServer() {
-  try {
-    const res = await fetch(SERVER_URL + "/health", { signal: AbortSignal.timeout(3000) });
-    if (res.ok) {
-      setStatus(t.serverOk, "success");
-      extractBtn.disabled = false;
-      return true;
-    }
-  } catch (_) {
-    // ignore
-  }
-  setStatus(t.serverFail, "error");
-  extractBtn.disabled = true;
-  return false;
 }
 
 // ── Functions injected into the page ──
@@ -211,29 +188,26 @@ async function extractQuizData() {
   throw new Error(t.extractFail);
 }
 
-// ── Convert and download ──
+// ── Convert and download (pure browser) ──
 async function convertAndDownload(quizData, deckName) {
-  const body = { quiz_data: quizData };
-  if (deckName) body.deck_name = deckName;
+  // 数据转换
+  const quizzes = processQuizData(quizData);
 
-  const res = await fetch(SERVER_URL + "/convert", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  showProgress(t.found(quizzes.length));
 
-  if (!res.ok) {
-    const errData = await res.json().catch(() => null);
-    throw new Error(errData?.error || `Server error: ${res.status}`);
-  }
+  // 生成 .apkg
+  const blob = await generateApkg(quizzes, deckName || ANKI_DECK_NAME);
 
-  const blob = await res.blob();
+  // 下载
   const baseName = sanitizeFilename(detectedArtifactTitle || deckName || "notebooklm_quiz");
   const filename = baseName + ".apkg";
 
   const url = URL.createObjectURL(blob);
   await chrome.downloads.download({ url, filename, saveAs: true });
-  URL.revokeObjectURL(url);
+  // Defer revocation to ensure download has time to read the blob
+  setTimeout(() => URL.revokeObjectURL(url), 60000);
+
+  return quizzes.length;
 }
 
 // ── Main flow ──
@@ -241,21 +215,15 @@ extractBtn.addEventListener("click", async () => {
   extractBtn.disabled = true;
 
   try {
-    showProgress(t.checkingServer);
-    const serverOk = await checkServer();
-    if (!serverOk) return;
-
     showProgress(t.extracting);
     const quizData = await extractQuizData();
 
-    const quizCount = quizData?.quiz?.length ?? 0;
-    showProgress(t.found(quizCount));
-
+    showProgress(t.generating);
     const deckName = deckNameInput.value.trim();
-    await convertAndDownload(quizData, deckName);
+    const cardCount = await convertAndDownload(quizData, deckName);
 
     hideProgress();
-    setStatus(t.done(quizCount), "success");
+    setStatus(t.done(cardCount), "success");
   } catch (err) {
     hideProgress();
     setStatus(err.message, "error");
@@ -266,5 +234,4 @@ extractBtn.addEventListener("click", async () => {
 
 // On popup open
 applyI18n();
-checkServer();
 autoDetectDeckName();

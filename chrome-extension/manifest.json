@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "NotebookLM to Anki",
-  "version": "1.1.0",
-  "description": "Extract NotebookLM quizzes and generate Anki flashcard packages",
+  "version": "2.0.0",
+  "description": "Extract NotebookLM quizzes and generate Anki flashcard packages (no server required)",
   "permissions": [
     "activeTab",
     "scripting",
@@ -10,12 +10,12 @@
   ],
   "host_permissions": [
     "https://notebooklm.google.com/*",
-    "https://*.google.com/*",
     "https://*.googleusercontent.com/*",
-    "https://*.usercontent.goog/*",
-    "https://*.gstatic.com/*",
-    "http://localhost:5000/*"
+    "https://*.usercontent.goog/*"
   ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
   "action": {
     "default_popup": "popup.html",
     "default_icon": {
